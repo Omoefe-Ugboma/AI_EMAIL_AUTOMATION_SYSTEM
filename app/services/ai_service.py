@@ -1,7 +1,7 @@
-import openai
+from openai import OpenAI
 from app.core.config import settings
 
-openai.api_key = settings.OPENAI_API_KEY
+client = OpenAI(api_key=settings.OPENAI_API_KEY)
 
 def generate_reply(subject: str, body: str) -> str:
     try:
@@ -14,12 +14,14 @@ def generate_reply(subject: str, body: str) -> str:
         Generate a clear, polite, and professional reply.
         """
 
-        response = openai.ChatCompletion.create(
+        response = client.chat.completions.create(
             model="gpt-4o-mini",
-            messages=[{"role": "user", "content": prompt}]
+            messages=[
+                {"role": "user", "content": prompt}
+            ]
         )
 
-        return response['choices'][0]['message']['content']
+        return response.choices[0].message.content
 
     except Exception as e:
-        return f"Error generating response: {str(e)}"
+        raise Exception(f"Error generating response: {str(e)}")
