@@ -22,6 +22,12 @@ An AI-powered backend system that generates professional email responses using L
 - Inquiry → Informative response
 - Feedback → Appreciative response
 
+## Features (Advanced)
+
+- Email storage with PostgreSQL
+- API endpoint to retrieve email history
+- Full AI pipeline (classification → response → persistence)
+
 ## Tech Stack
 - Python
 - FastAPI

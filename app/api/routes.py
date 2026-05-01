@@ -3,6 +3,9 @@ from app.schemas.email_schema import EmailRequest
 from app.services.classifier import classify_email
 from app.services.ai_service import generate_reply
 from app.utils.helpers import normalize_category
+from app.services.db_service import save_email
+from app.core.database import SessionLocal
+from app.models.email_model import EmailLog
 
 router = APIRouter()
 
@@ -26,6 +29,14 @@ def generate_email_reply(request: EmailRequest):
         # Step 4: logging (important)
         print(f"[INFO] Category: {category} | Subject: {request.subject}")
 
+        # After generating reply
+        save_email(
+            request.subject,
+            request.body,
+            category,
+            reply
+        )
+
         # Step 5: return structured response
         return {
             "status": "success",
@@ -41,3 +52,19 @@ def generate_email_reply(request: EmailRequest):
 
     except Exception as e:
         raise HTTPException(status_code=500, detail=str(e))
+
+@router.get("/emails")
+def get_emails():
+    db = SessionLocal()
+    emails = db.query(EmailLog).all()
+
+    results = []
+    for email in emails:
+        results.append({
+            "subject": email.subject,
+            "category": email.category,
+            "reply": email.reply
+        })
+
+    db.close()
+    return results
