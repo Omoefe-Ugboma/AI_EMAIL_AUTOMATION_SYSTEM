@@ -5,5 +5,5 @@ load_dotenv()
 
 class Settings:
     OPENAI_API_KEY = os.getenv("OPENAI_API_KEY")
-
+    SECRET_KEY = os.getenv("SECRET_KEY")
 settings = Settings()

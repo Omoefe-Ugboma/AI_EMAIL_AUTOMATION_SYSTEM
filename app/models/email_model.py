@@ -1,5 +1,7 @@
-from sqlalchemy import Column, Integer, String, Text
+from sqlalchemy import Column, Integer, String, Text, ForeignKey
 from app.core.database import Base
+
+user_id = Column(Integer, ForeignKey("users.id"))
 
 class EmailLog(Base):
     __tablename__ = "emails"
