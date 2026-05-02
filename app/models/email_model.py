@@ -1,17 +1,15 @@
-from sqlalchemy import Column, Integer, String, Text, ForeignKey
+from sqlalchemy import Column, Integer, String, Text, Float, ForeignKey
 from app.core.database import Base
-
-
-# user_id = Column(Integer, ForeignKey("users.id"))
 
 class EmailLog(Base):
     __tablename__ = "emails"
 
     id = Column(Integer, primary_key=True, index=True)
-    subject = Column(String(255))
+    subject = Column(String)
     body = Column(Text)
-    category = Column(String(50))
+    category = Column(String)
     reply = Column(Text)
+    action = Column(String)
+    response_time = Column(Float)
 
-    # 🔥 THIS IS THE KEY PART
     user_id = Column(Integer, ForeignKey("users.id"))

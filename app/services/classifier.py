@@ -47,3 +47,21 @@ def classify_email(subject: str, body: str) -> str:
 
     # Otherwise fallback to AI
     return classify_email_ai(subject, body)
+
+
+def rule_based_classification(text: str):
+    text = text.lower()
+
+    if any(x in text for x in ["invoice", "payment", "fee"]):
+        return "finance"
+
+    if "admission" in text or "apply" in text:
+        return "admissions"
+
+    if any(x in text for x in ["exam", "result", "course"]):
+        return "academic"
+
+    if any(x in text for x in ["not happy", "bad", "complaint"]):
+        return "complaint"
+
+    return None
