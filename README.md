@@ -31,19 +31,43 @@ An AI-powered backend system that generates professional email responses using L
 - Inquiry → Informative response
 - Feedback → Appreciative response
 
+## 🚀Features
+
+- AI-generated email replies (OpenAI)
+- Email classification system
+- JWT authentication
+- Multi-user system
+- PostgreSQL database
+- REST API (FastAPI)
+
+## 🌍 Live Demo
+
+https://your-api-url
+
+## 🧠Tech Stack
+
+- FastAPI
+- PostgreSQL
+- SQLAlchemy
+- OpenAI API
+- JWT Authentication
+
+## 📌Endpoints
+
+- POST /auth/register
+- POST /auth/login
+- GET /auth/me
+- POST /generate-reply
+- GET /my-emails
+
 ## Features (Advanced)
 
 - Email storage with PostgreSQL
 - API endpoint to retrieve email history
 - Full AI pipeline (classification → response → persistence)
 
-## Tech Stack
-- Python
-- FastAPI
-- OpenAI API
-
 ## Run Locally
 
 ```bash
 pip install -r requirements.txt
-uvicorn app.main:app --reload
+uvicorn app.main:app --reload 
