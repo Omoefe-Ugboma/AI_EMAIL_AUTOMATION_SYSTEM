@@ -15,6 +15,15 @@ An AI-powered backend system that generates professional email responses using L
 - Category-based tone adaptation
 - Modular backend architecture (FastAPI)
 
+## Features
+
+- Authentication ✔
+- User identity ✔
+- Data persistence ✔
+- Data isolation ✔
+
+- REAL multi-user backend system
+
 ## Example Categories
 
 - Complaint → Apologetic response

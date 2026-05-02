@@ -1,16 +1,26 @@
-from fastapi import APIRouter, HTTPException, Depends, Header
+from fastapi import APIRouter, HTTPException, Depends
+from fastapi.security import HTTPBearer, HTTPAuthorizationCredentials
+
 from app.schemas.email_schema import EmailRequest
 from app.services.classifier import classify_email
 from app.services.ai_service import generate_reply
 from app.services.db_service import save_email
 from app.utils.helpers import normalize_category
-from app.core.security import verify_token
-from fastapi.security import HTTPBearer, HTTPAuthorizationCredentials
 
-router = APIRouter()
+from app.core.security import verify_token
+from app.core.database import SessionLocal
+
+from app.models.user_model import User
+from app.models.email_model import EmailLog
+
+
+router = APIRouter(tags=["Email"])
+
+# 🔐 Security setup
 security = HTTPBearer()
 
-# 🔐 AUTH FUNCTION
+
+# 🔐 AUTH DEPENDENCY (USED BY ALL PROTECTED ROUTES)
 def get_current_user(credentials: HTTPAuthorizationCredentials = Depends(security)):
     token = credentials.credentials
 
@@ -22,41 +32,50 @@ def get_current_user(credentials: HTTPAuthorizationCredentials = Depends(securit
     return payload
 
 
-# 🚀 PROTECTED ROUTE
+# 🚀 GENERATE EMAIL REPLY (PROTECTED)
 @router.post("/generate-reply")
 def generate_email_reply(
     request: EmailRequest,
     user=Depends(get_current_user)
 ):
-    try:
-        # 🧠 Step 1: classify email
-        raw_category = classify_email(request.subject, request.body)
+    db = SessionLocal()
 
-        # 🔧 Step 2: normalize category
+    try:
+        # 🔐 Get current user from token
+        user_email = user.get("sub")
+
+        db_user = db.query(User).filter(User.email == user_email).first()
+
+        if not db_user:
+            raise HTTPException(status_code=404, detail="User not found")
+
+        # 🧠 Classify email
+        raw_category = classify_email(request.subject, request.body)
         category = normalize_category(raw_category)
 
-        # 🤖 Step 3: generate AI reply
+        # 🤖 Generate reply
         reply = generate_reply(
             category,
             request.subject,
             request.body
         )
 
-        # 💾 Step 4: save to database
+        # 💾 Save email (linked to user)
         save_email(
             request.subject,
             request.body,
             category,
-            reply
+            reply,
+            db_user.id
         )
 
-        # 📊 Step 5: logging
-        print(f"[INFO] User: {user.get('sub')} | Category: {category}")
+        # 📊 Logging
+        print(f"[INFO] User: {user_email} | Category: {category}")
 
-        # 📦 Step 6: return response
+        # 📦 Response
         return {
             "status": "success",
-            "user": user.get("sub"),
+            "user": user_email,
             "category": category,
             "meta": {
                 "model": "gpt-4o-mini"
@@ -68,4 +87,45 @@ def generate_email_reply(
         }
 
     except Exception as e:
+        print("ERROR:", str(e))  # 👈 VERY IMPORTANT
         raise HTTPException(status_code=500, detail=str(e))
+
+    finally:
+            db.close()
+
+
+# 📥 GET USER'S EMAILS ONLY (MULTI-USER SYSTEM)
+@router.get("/my-emails")
+def get_my_emails(user=Depends(get_current_user)):
+    db = SessionLocal()
+
+    try:
+        user_email = user.get("sub")
+
+        db_user = db.query(User).filter(User.email == user_email).first()
+
+        if not db_user:
+            raise HTTPException(status_code=404, detail="User not found")
+
+        emails = db.query(EmailLog).filter(
+            EmailLog.user_id == db_user.id
+        ).all()
+
+        results = []
+        for email in emails:
+            results.append({
+                "subject": email.subject,
+                "category": email.category,
+                "reply": email.reply
+            })
+
+        return {
+            "status": "success",
+            "data": results
+        }
+
+    except Exception:
+        raise HTTPException(status_code=500, detail="Internal server error")
+
+    finally:
+        db.close()
