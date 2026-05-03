@@ -4,3 +4,22 @@ client_secret_*.json
 .env
 *.pickle
 token.pickle
+
+
+# Add to .gitignore
+cat >> .gitignore << EOF
+
+# Tokens and credentials
+*.pickle
+*.pkl
+token.pickle
+credentials.json
+oauth2.json
+*.token
+
+# Environment files
+.env
+.env.*
+*.key
+*.secret
+EOF
