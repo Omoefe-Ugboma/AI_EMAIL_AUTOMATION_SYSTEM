@@ -22,4 +22,6 @@ oauth2.json
 .env.*
 *.key
 *.secret
-EOF
+EOFtoken.pickle source /c/Users/HP/Desktop/Study_France_Vision/ai-email-assistant/venv/Scripts/activate
+venv/
+__pycache__/
