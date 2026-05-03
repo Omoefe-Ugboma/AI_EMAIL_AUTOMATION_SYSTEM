@@ -2,20 +2,21 @@
 
 An AI-powered backend system that generates professional email responses using LLMs.
 
-## Features
+## Features 1
+
 - Generate email replies from input
 - Modular architecture
 - FastAPI-based REST API
 - Environment-based configuration
 
-## Features
+## Features 2
 
 - Email classification (rule-based + AI hybrid)
 - Context-aware response generation
 - Category-based tone adaptation
 - Modular backend architecture (FastAPI)
 
-## Features
+## Features 3
 
 - Authentication ✔
 - User identity ✔
@@ -31,7 +32,7 @@ An AI-powered backend system that generates professional email responses using L
 - Inquiry → Informative response
 - Feedback → Appreciative response
 
-## 🚀Features
+## 🚀Features 4
 
 - AI-generated email replies (OpenAI)
 - Email classification system

@@ -20,6 +20,7 @@ from app.services.gmail_reader import fetch_unread_emails
 from app.services.gmail_sender import send_reply
 
 from app.models.email_model import EmailLog
+from app.services.gmail_reader import apply_label
 
 import re
 
@@ -173,6 +174,12 @@ def process_gmail(user=Depends(get_current_user)):
                 id=msg_id,
                 body={'removeLabelIds': ['UNREAD']}
             ).execute()
+
+            # 🏷️ Apply "Processed" label
+            apply_label(service, msg_id, "Processed")
+
+            # 🏷️ Apply category-based label
+            apply_label(service, msg_id, category.capitalize())
 
             response_time = end_timer(start)
 
