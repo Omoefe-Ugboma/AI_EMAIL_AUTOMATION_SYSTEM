@@ -2,3 +2,5 @@
 client_secret_*.json
 *.json
 .env
+*.pickle
+token.pickle

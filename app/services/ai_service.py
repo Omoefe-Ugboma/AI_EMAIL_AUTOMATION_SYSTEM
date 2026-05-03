@@ -4,18 +4,32 @@ from app.services.prompt_service import build_prompt
 
 client = OpenAI(api_key=settings.OPENAI_API_KEY)
 
-def generate_reply(category: str, subject: str, body: str) -> str:
-    try:
-        prompt = build_prompt(category, subject, body)
+def generate_reply(category, subject, body, recipient_name="Customer"):
+    prompt = f"""
+You are a professional university support assistant.
 
-        response = client.chat.completions.create(
-            model="gpt-4o-mini",
-            messages=[
-                {"role": "user", "content": prompt}
-            ]
-        )
+Write a clear, polite, and human-like email reply.
 
-        return response.choices[0].message.content
+Rules:
+- Address the recipient by name: {recipient_name}
+- Do NOT use placeholders like [Your Name]
+- Do NOT use brackets anywhere
+- Keep it professional and concise
+- Tailor the response to the category: {category}
 
-    except Exception as e:
-        raise Exception(f"Error generating response: {str(e)}")
+Signature:
+Best regards,
+AI Support Team
+University Support Department
+support@university.com
+
+Email Subject: {subject}
+Email Content: {body}
+"""
+
+    response = client.chat.completions.create(
+        model="gpt-4o-mini",
+        messages=[{"role": "user", "content": prompt}]
+    )
+
+    return response.choices[0].message.content

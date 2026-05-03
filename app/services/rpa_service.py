@@ -9,4 +9,4 @@ def route_email(category: str):
         "general": "Handled Automatically"
     }
 
-    return mapping.get(category, "Unhandled")
+    return mapping.get(category, "Handled Automatically")
