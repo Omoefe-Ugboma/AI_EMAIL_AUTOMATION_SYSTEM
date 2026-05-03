@@ -1,6 +1,7 @@
 from app.core.database import SessionLocal
 from app.models.email_model import EmailLog
 
+
 def save_email(subject, body, category, reply, action, response_time, user_id, message_id):
     db = SessionLocal()
 

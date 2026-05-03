@@ -21,7 +21,7 @@ from app.services.gmail_sender import send_reply
 
 from app.models.email_model import EmailLog
 from app.services.gmail_reader import apply_label
-
+import uuid
 import re
 
 
@@ -66,7 +66,8 @@ def process_email(request: EmailRequest, user=Depends(get_current_user)):
         reply,
         action,
         response_time,
-        db_user.id
+        db_user.id,
+        str(uuid.uuid4())   # ✅ required here (simulation)
     )
 
     db.close()
@@ -162,7 +163,16 @@ def process_gmail(user=Depends(get_current_user)):
             start = start_timer()
 
             category = classify_email(subject, body)
-            reply = generate_reply(category, subject, body, recipient_name)
+            # reply = generate_reply(category, subject, body, recipient_name)
+            if category == "complaint":
+                tone = "empathetic and calm"
+            elif category == "finance":
+                tone = "formal and precise"
+            else:
+                tone = "professional"
+
+            reply = generate_reply(category, subject, body, recipient_name, tone)
+            
             action = route_email(category)
 
             # 📤 Send reply
@@ -192,7 +202,7 @@ def process_gmail(user=Depends(get_current_user)):
                 action,
                 response_time,
                 db_user.id,
-                msg_id
+                msg_id   # ✅ ONLY this
             )
 
             results.append({
