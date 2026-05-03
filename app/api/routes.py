@@ -18,6 +18,9 @@ from app.models.email_model import EmailLog
 from app.services.gmail_auth import get_gmail_service
 from app.services.gmail_reader import fetch_unread_emails
 from app.services.gmail_sender import send_reply
+
+from app.models.email_model import EmailLog
+
 import re
 
 
@@ -116,7 +119,7 @@ def process_gmail(user=Depends(get_current_user)):
     service = get_gmail_service()
 
     db = SessionLocal()
-    user_email = user.get("sub")
+    user_email = user.get("sub").lower()
 
     db_user = db.query(User).filter(User.email == user_email).first()
 
@@ -130,6 +133,7 @@ def process_gmail(user=Depends(get_current_user)):
 
     results = []
 
+    # ✅ LOOP MUST BE INSIDE FUNCTION
     for email in emails:
         subject = email["subject"]
         body = email["body"]
@@ -137,57 +141,65 @@ def process_gmail(user=Depends(get_current_user)):
         msg_id = email["id"]
 
         sender_email = extract_email(sender)
-        user_email = user.get("sub").lower()
 
-        # 🚨 Skip your own emails
+        # 🚨 1. Skip your own emails
         if sender_email == user_email:
             continue
 
-        # 🚨 Prevent reply loops
+        # 🚨 2. Skip replies (prevent loops)
         if subject.lower().startswith("re:"):
             continue
 
-        # 🚨 Skip system emails
-        if "no-reply" in sender_email or "noreply" in sender_email:
+        # 🚨 3. Skip already processed emails
+        existing = db.query(EmailLog).filter(EmailLog.message_id == msg_id).first()
+        if existing:
             continue
 
-        recipient_name = email.get("name", "Customer")
+        try:
+            recipient_name = email.get("name", "Customer")
 
-        start = start_timer()
+            start = start_timer()
 
-        category = classify_email(subject, body)
-        reply = generate_reply(category, subject, body, recipient_name)
-        action = route_email(category)
+            category = classify_email(subject, body)
+            reply = generate_reply(category, subject, body, recipient_name)
+            action = route_email(category)
 
-        send_reply(service, sender, subject, reply)
+            # 📤 Send reply
+            send_reply(service, sender, subject, reply)
 
-        # Mark as read
-        service.users().messages().modify(
-            userId='me',
-            id=msg_id,
-            body={'removeLabelIds': ['UNREAD']}
-        ).execute()
+            # ✅ Mark as read
+            service.users().messages().modify(
+                userId='me',
+                id=msg_id,
+                body={'removeLabelIds': ['UNREAD']}
+            ).execute()
 
-        response_time = end_timer(start)
+            response_time = end_timer(start)
 
-        save_email(
-            subject,
-            body,
-            category,
-            reply,
-            action,
-            response_time,
-            db_user.id
-        )
+            # 💾 Save email
+            save_email(
+                subject,
+                body,
+                category,
+                reply,
+                action,
+                response_time,
+                db_user.id,
+                msg_id
+            )
 
-        results.append({
-            "subject": subject,
-            "category": category,
-            "action": action,
-            "metrics": {
-                "response_time": response_time
-            }
-        })
+            results.append({
+                "subject": subject,
+                "category": category,
+                "action": action,
+                "metrics": {
+                    "response_time": response_time
+                }
+            })
+
+        except Exception as e:
+            print("ERROR PROCESSING EMAIL:", str(e))
+            continue
 
     db.close()
 

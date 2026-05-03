@@ -1,7 +1,7 @@
 from app.core.database import SessionLocal
 from app.models.email_model import EmailLog
 
-def save_email(subject, body, category, reply, action, response_time, user_id):
+def save_email(subject, body, category, reply, action, response_time, user_id, message_id):
     db = SessionLocal()
 
     email = EmailLog(
@@ -11,7 +11,8 @@ def save_email(subject, body, category, reply, action, response_time, user_id):
         reply=reply,
         action=action,
         response_time=response_time,
-        user_id=user_id
+        user_id=user_id,
+        message_id=message_id
     )
 
     db.add(email)

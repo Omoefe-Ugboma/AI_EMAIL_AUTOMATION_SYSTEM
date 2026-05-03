@@ -11,5 +11,7 @@ class EmailLog(Base):
     reply = Column(Text)
     action = Column(String)
     response_time = Column(Float)
-
+    
+    message_id = Column(String, unique=True, index=True)  # ✅ NEW
+    
     user_id = Column(Integer, ForeignKey("users.id"))

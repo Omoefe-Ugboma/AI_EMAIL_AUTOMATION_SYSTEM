@@ -40,6 +40,15 @@ An AI-powered backend system that generates professional email responses using L
 - PostgreSQL database
 - REST API (FastAPI)
 
+## Make system production-level
+
+- No duplicate replies
+- No infinite loops
+- No processing same email twice
+- No crash on bad email
+- Safe processing
+- Reliable behavior
+
 ## 🌍 Live Demo
 
 https://your-api-url
