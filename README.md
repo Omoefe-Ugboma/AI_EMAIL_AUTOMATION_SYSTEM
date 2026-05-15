@@ -201,6 +201,91 @@ This system simulates a real-world email automation platform used in universitie
 
 ## ⭐ Acknowledgements
 
+## Console success Screen
+
+![Persistent Threads](screenshots/Console_200_OK.png)
+
+---
+
+## Dashboard Screen 
+
+![Persistent Threads](screenshots/dashboard_ai_email_auto.png)
+
+---
+
+## Email History Screen 
+
+![Persistent Threads](screenshots/Email_Histories.png)
+
+
+---
+
+## Email Message Generator Screen 
+
+![Persistent Threads](screenshots/Email_Message_Gen_.png)
+
+---
+
+## Email Message Response Screen 1
+
+![Persistent Threads](screenshots/Email_Response_1.png)
+
+---
+
+## Email Message Response Screen 2
+
+![Persistent Threads](screenshots/Email_Response_2.png)
+
+---
+
+## Email Message Fetching Screen 
+
+![Persistent Threads](screenshots/Emails_Fetched_Response.png)
+
+
+---
+
+## Gmail API Screen 
+
+![Persistent Threads](screenshots/Gmail_API.png)
+
+---
+
+## Email Label Screen 
+
+![Persistent Threads](screenshots/Labels_.png)
+
+---
+
+## Login Screen 
+
+![Persistent Threads](screenshots/Lgin_screen.png)
+
+---
+
+## List of EndPoints Screen 
+
+![Persistent Threads](screenshots/List_Of_EndPoints.png)
+
+---
+
+## OpenAI API Screen 
+
+![Persistent Threads](screenshots/OpenAI_API.png)
+
+
+---
+
+## Processed Email Screen 
+
+![Persistent Threads](screenshots/Processed_Email.png)
+
+---
+
+## Swagger Documentation Screen 
+
+![Persistent Threads](screenshots/swagger_docs.png)
+
 - OpenAI API
 - Gmail API
 - FastAPI
